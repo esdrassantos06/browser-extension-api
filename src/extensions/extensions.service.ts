@@ -3,14 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from 'generated/prisma';
 import { DatabaseService } from 'src/database/database.service';
+import { CreateExtensionDto } from './dto/create-extension.dto';
+import { UpdateExtensionDto } from './dto/update-extension.dto';
+import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class ExtensionsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async create(createExtensionDto: Prisma.ExtensionCreateInput) {
+  async create(createExtensionDto: CreateExtensionDto) {
     try {
       return this.databaseService.extension.create({
         data: createExtensionDto,
@@ -59,7 +61,7 @@ export class ExtensionsService {
     }
   }
 
-  async update(id: string, updateExtensionDto: Prisma.ExtensionUpdateInput) {
+  async update(id: string, updateExtensionDto: UpdateExtensionDto) {
     try {
       return await this.databaseService.extension.update({
         where: { id },

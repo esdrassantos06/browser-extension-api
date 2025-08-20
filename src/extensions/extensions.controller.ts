@@ -8,14 +8,17 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ExtensionsService } from './extensions.service';
-import { Prisma } from 'generated/prisma';
+import { CreateExtensionDto } from './dto/create-extension.dto';
+import { UpdateExtensionDto } from './dto/update-extension.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Extensions')
 @Controller('extensions')
 export class ExtensionsController {
   constructor(private readonly extensionsService: ExtensionsService) {}
 
   @Post()
-  create(@Body() createExtensionDto: Prisma.ExtensionCreateInput) {
+  create(@Body() createExtensionDto: CreateExtensionDto) {
     return this.extensionsService.create(createExtensionDto);
   }
 
@@ -32,7 +35,7 @@ export class ExtensionsController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateExtensionDto: Prisma.ExtensionUpdateInput,
+    @Body() updateExtensionDto: UpdateExtensionDto,
   ) {
     return this.extensionsService.update(id, updateExtensionDto);
   }
