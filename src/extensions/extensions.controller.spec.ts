@@ -84,28 +84,45 @@ describe('ExtensionsController', () => {
 
   describe('findAll (GET /extensions)', () => {
     it('should return all extensions', async () => {
+      const mockPaginationDto = {
+        page: 1,
+        limit: 10,
+      };
+
       const extensions = [mockExtension];
       mockExtensionsService.findAll.mockResolvedValue(extensions);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(mockPaginationDto);
 
       expect(mockExtensionsService.findAll).toHaveBeenCalled();
       expect(result).toEqual(extensions);
     });
 
     it('should return empty array when no extensions exist', async () => {
+      const mockPaginationDto = {
+        page: 1,
+        limit: 10,
+      };
+
       mockExtensionsService.findAll.mockResolvedValue([]);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(mockPaginationDto);
 
       expect(result).toEqual([]);
     });
 
     it('should handle service errors', async () => {
+      const mockPaginationDto = {
+        page: 1,
+        limit: 10,
+      };
+
       const error = new Error('Service error');
       mockExtensionsService.findAll.mockRejectedValue(error);
 
-      await expect(controller.findAll()).rejects.toThrow('Service error');
+      await expect(controller.findAll(mockPaginationDto)).rejects.toThrow(
+        'Service error',
+      );
     });
   });
 
@@ -126,7 +143,8 @@ describe('ExtensionsController', () => {
 
       const result = await controller.findOne(id);
 
-      expect(result).toBeNull();
+      expect(mockExtensionsService.findOne).toHaveBeenCalledWith(id);
+      expect(result).toEqual(null);
     });
 
     it('should handle service errors', async () => {

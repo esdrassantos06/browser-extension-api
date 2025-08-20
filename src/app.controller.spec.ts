@@ -16,7 +16,12 @@ describe('AppController', () => {
 
   describe('/', () => {
     it('should return the API description', () => {
-      expect(appController.getHello()).toContain('Browser Extension API');
+      const result = appController.getHello();
+
+      expect(result).toHaveProperty('name', 'Browser Extension API');
+      expect(result).toHaveProperty('version', '1.0.1');
+      expect(result).toHaveProperty('description');
+      expect(result).toHaveProperty('endpoints');
     });
   });
 });

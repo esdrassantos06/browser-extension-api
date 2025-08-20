@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExtensionsService } from './extensions.service';
 import { DatabaseService } from '../database/database.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('ExtensionsService', () => {
   let service: ExtensionsService;
@@ -87,7 +88,7 @@ describe('ExtensionsService', () => {
       const extensions = [mockExtension];
       mockDatabaseService.extension.findMany.mockResolvedValue(extensions);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1, limit: 20 });
 
       expect(mockDatabaseService.extension.findMany).toHaveBeenCalled();
       expect(result).toEqual(extensions);
@@ -96,7 +97,7 @@ describe('ExtensionsService', () => {
     it('should return empty array when no extensions exist', async () => {
       mockDatabaseService.extension.findMany.mockResolvedValue([]);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1, limit: 20 });
 
       expect(result).toEqual([]);
     });
@@ -115,13 +116,11 @@ describe('ExtensionsService', () => {
       expect(result).toEqual(mockExtension);
     });
 
-    it('should return null when extension not found', async () => {
+    it('should throw NotFoundException when extension not found', async () => {
       const id = 'non-existent-id';
       mockDatabaseService.extension.findUnique.mockResolvedValue(null);
 
-      const result = await service.findOne(id);
-
-      expect(result).toBeNull();
+      await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
     });
   });
 
