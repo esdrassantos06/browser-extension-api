@@ -33,7 +33,7 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/esdrassantos06/browser-extension-api
    cd browser-extension-api
    ```
 
