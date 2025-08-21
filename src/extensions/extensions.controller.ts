@@ -13,6 +13,7 @@ import { CreateExtensionDto } from './dto/create-extension.dto';
 import { UpdateExtensionDto } from './dto/update-extension.dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Extensions')
 @Controller('extensions')
@@ -30,6 +31,7 @@ export class ExtensionsController {
     return this.extensionsService.create(createExtensionDto);
   }
 
+  @Throttle({ default: { limit: 50, ttl: 60 * 1000 } })
   @Get()
   @ApiResponse({
     status: 200,
@@ -40,6 +42,7 @@ export class ExtensionsController {
     return this.extensionsService.findAll(paginationDto);
   }
 
+  @Throttle({ default: { limit: 50, ttl: 60 * 1000 } })
   @Get(':id')
   @ApiResponse({
     status: 200,
@@ -94,6 +97,7 @@ export class ExtensionsController {
     return this.extensionsService.deactivate(id);
   }
 
+  @Throttle({ default: { limit: 50, ttl: 60 * 1000 } })
   @Get('active/:active')
   @ApiResponse({
     status: 200,

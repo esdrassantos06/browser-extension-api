@@ -26,6 +26,21 @@ async function bootstrap() {
     }),
   );
 
+  const origins = [
+    'http://localhost:5173',
+    'http://localhost:4173',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003',
+  ];
+
+  app.enableCors({
+    origin: origins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   app.use(express.json({ limit: '10kb' }));
 
   app.use(

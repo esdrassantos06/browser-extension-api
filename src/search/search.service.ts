@@ -21,9 +21,6 @@ export class SearchService {
           ],
         },
       });
-      if (extensions.length === 0) {
-        throw new NotFoundException('No extensions found');
-      }
       return extensions;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

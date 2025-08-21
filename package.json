@@ -1,6 +1,6 @@
 {
   "name": "browser-extension-api",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Browser Extension API",
   "author": "Esdras Santos",
   "private": true,
