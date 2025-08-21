@@ -29,47 +29,18 @@ export class ExtensionsService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationDto, active?: boolean) {
     const { page, limit } = paginationDto ?? { page: 1, limit: 20 };
 
     try {
-      const totalExtensions = await this.databaseService.extension.count();
+      const where = active !== undefined ? { active } : {};
 
-      const extensions = await this.databaseService.extension.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-
-      const totalPages = Math.ceil(totalExtensions / limit);
-
-      return {
-        page,
-        limit,
-        extensions,
-        totalExtensions,
-        totalPages,
-      };
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new BadRequestException('Failed to retrieve extensions');
-      }
-      throw error;
-    }
-  }
-
-  async findAllByActive(active: boolean, paginationDto: PaginationDto) {
-    const { page, limit } = paginationDto ?? { page: 1, limit: 20 };
-
-    try {
       const totalExtensions = await this.databaseService.extension.count({
-        where: { active },
+        where,
       });
 
       const extensions = await this.databaseService.extension.findMany({
-        where: { active },
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {

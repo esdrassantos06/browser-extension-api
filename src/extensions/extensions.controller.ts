@@ -12,7 +12,7 @@ import { ExtensionsService } from './extensions.service';
 import { CreateExtensionDto } from './dto/create-extension.dto';
 import { UpdateExtensionDto } from './dto/update-extension.dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { FindAllExtensionsDto } from './dto/find-all-extensions.dto';
 import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Extensions')
@@ -36,10 +36,20 @@ export class ExtensionsController {
   @ApiResponse({
     status: 200,
     description: 'Extensions fetched',
-    type: [PaginationDto],
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        extensions: { type: 'array' },
+        totalExtensions: { type: 'number' },
+        totalPages: { type: 'number' },
+      },
+    },
   })
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.extensionsService.findAll(paginationDto);
+  findAll(@Query() queryDto: FindAllExtensionsDto) {
+    const { active, ...paginationDto } = queryDto;
+    return this.extensionsService.findAll(paginationDto, active);
   }
 
   @Throttle({ default: { limit: 50, ttl: 60 * 1000 } })
@@ -95,19 +105,5 @@ export class ExtensionsController {
   })
   deactivate(@Param('id') id: string) {
     return this.extensionsService.deactivate(id);
-  }
-
-  @Throttle({ default: { limit: 50, ttl: 60 * 1000 } })
-  @Get('active/:active')
-  @ApiResponse({
-    status: 200,
-    description: 'Extensions fetched by active status',
-    type: [PaginationDto],
-  })
-  findAllByActive(
-    @Param('active') active: boolean,
-    @Query() paginationDto: PaginationDto,
-  ) {
-    return this.extensionsService.findAllByActive(active, paginationDto);
   }
 }

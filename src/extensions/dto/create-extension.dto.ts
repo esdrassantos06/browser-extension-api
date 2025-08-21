@@ -1,11 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsString,
-  IsOptional,
-  IsBoolean,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsString, IsOptional, MaxLength, MinLength } from 'class-validator';
 
 export class CreateExtensionDto {
   @ApiProperty({ description: 'Name of the extension' })
@@ -23,9 +17,4 @@ export class CreateExtensionDto {
   @MaxLength(255)
   @MinLength(3)
   description?: string | null;
-
-  @ApiPropertyOptional({ description: 'Is the extension active?' })
-  @IsOptional()
-  @IsBoolean()
-  active?: boolean;
 }
