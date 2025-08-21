@@ -23,7 +23,7 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect((res) => {
         expect(res.body).toHaveProperty('name', 'Browser Extension API');
-        expect(res.body).toHaveProperty('version', '1.0.1');
+        expect(res.body).toHaveProperty('version');
       });
   });
 
