@@ -9,7 +9,7 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
 - **Database Integration**: PostgreSQL database with Prisma ORM
 - **Type Safety**: Built with TypeScript for better development experience
 - **Testing**: Comprehensive test suite with Jest
-- **Docker Support**: Easy development setup with Docker Compose
+- **Docker Support**: Easy development and production setup with Docker Compose
 
 ## 🛠️ Tech Stack
 
@@ -24,11 +24,13 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
 - Node.js (v18 or higher)
 - npm or yarn
 - PostgreSQL database
-- Docker (optional, for local development)
+- Docker & Docker Compose (for containerized setup)
 
 ## 🚀 Quick Start
 
-### Option 1: Using Docker (Recommended)
+### Option 1: Full Docker Setup (Recommended for Production)
+
+This option runs both the API and database in Docker containers.
 
 1. **Clone the repository**
 
@@ -37,10 +39,70 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
    cd browser-extension-api
    ```
 
-2. **Start the database with Docker**
+2. **Set up environment variables**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Update the `.env` file with your configuration:
+
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@nest-postgres:5432/postgres"
+   PORT=3000
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=postgres
+   ```
+
+3. **Start the entire application with Docker Compose**
 
    ```bash
    docker-compose up -d
+   ```
+
+   This will:
+   - Build the NestJS application
+   - Start PostgreSQL database
+   - Run database migrations automatically
+   - Start the API server
+
+4. **Access the application**
+   - API: http://localhost:3000
+   - Database: localhost:5432
+
+5. **View logs**
+
+   ```bash
+   # View all logs
+   docker-compose logs -f
+
+   # View specific service logs
+   docker-compose logs -f nest-api
+   docker-compose logs -f nest-postgres
+   ```
+
+6. **Stop the application**
+
+   ```bash
+   docker-compose down
+   ```
+
+### Option 2: Hybrid Development Setup (Recommended for Development)
+
+This option runs only the database in Docker while running the API locally for better development experience.
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/esdrassantos06/browser-extension-api
+   cd browser-extension-api
+   ```
+
+2. **Start only the database with Docker**
+
+   ```bash
+   docker-compose up -d nest-postgres
    ```
 
 3. **Install dependencies**
@@ -55,11 +117,14 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
    cp .env.example .env
    ```
 
-   Update the `.env` file with your database configuration:
+   Update the `.env` file to connect to the Docker database:
 
    ```env
    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
    PORT=3000
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=postgres
    ```
 
 5. **Run database migrations and seed data**
@@ -74,7 +139,7 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
    npm run start:dev
    ```
 
-### Option 2: Local Setup
+### Option 3: Local Setup
 
 1. **Install dependencies**
 
@@ -103,6 +168,36 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
    ```bash
    npm run start:dev
    ```
+
+## 🐳 Docker Commands
+
+### Development Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Start only database
+docker-compose up -d nest-postgres
+
+# Start only API
+docker-compose up -d nest-api
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (⚠️ This will delete all data)
+docker-compose down -v
+
+# Rebuild containers
+docker-compose up -d --build
+
+# Access database shell
+docker-compose exec nest-postgres psql -U postgres -d postgres
+```
 
 ## 📚 API Documentation
 
@@ -177,6 +272,9 @@ npm run test:e2e
 
 # Watch mode
 npm run test:watch
+
+# Run tests in Docker
+docker-compose exec nest-api npm run test
 ```
 
 ## 🏗️ Project Structure
@@ -203,6 +301,10 @@ prisma/
 └── migrations/        # Database migrations
 
 generated/             # Generated Prisma client
+
+docker/
+├── Dockerfile         # Production Docker image
+└── docker-compose.yml # Development environment
 ```
 
 ## 🗄️ Database Schema
@@ -235,6 +337,7 @@ npm run start:prod    # Start in production mode
 npx prisma generate   # Generate Prisma client
 npx prisma migrate dev # Run migrations
 npx prisma db seed    # Seed the database
+npx prisma studio     # Open Prisma Studio
 
 # Code Quality
 npm run lint          # Run ESLint
@@ -244,16 +347,52 @@ npm run format        # Format code with Prettier
 npm run test          # Run unit tests
 npm run test:cov      # Run tests with coverage
 npm run test:e2e      # Run E2E tests
+
+# Docker
+docker-compose up -d  # Start development environment
+docker-compose down   # Stop development environment
 ```
 
 ## 🔧 Environment Variables
 
 Create a `.env` file in the root directory:
 
+### For Local Development with Docker Database
+
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/database_name"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
 PORT=3000
 ```
+
+### For Full Docker Setup
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@nest-postgres:5432/postgres"
+PORT=3000
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+```
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+1. **Database connection refused**
+   - Ensure Docker containers are running: `docker-compose ps`
+   - Check if database is ready: `docker-compose logs nest-postgres`
+
+2. **Port already in use**
+   - Stop existing containers: `docker-compose down`
+   - Check for other services using the same ports
+
+3. **Prisma client not generated**
+   - Run: `npx prisma generate`
+   - In Docker: `docker-compose exec nest-api npx prisma generate`
+
+4. **Migrations failed**
+   - Reset database: `docker-compose down -v && docker-compose up -d`
+   - Run migrations: `npx prisma migrate dev`
 
 ## 🤝 Contributing
 
