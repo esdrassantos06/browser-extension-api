@@ -3,14 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
 import { CreateExtensionDto } from './dto/create-extension.dto';
 import { UpdateExtensionDto } from './dto/update-extension.dto';
-import { Prisma } from 'generated/prisma';
+import { Prisma } from '@prisma/client';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ExtensionsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: PrismaService) {}
 
   async create(createExtensionDto: CreateExtensionDto) {
     try {
@@ -28,9 +29,63 @@ export class ExtensionsService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
+    const { page, limit } = paginationDto ?? { page: 1, limit: 20 };
+
     try {
-      return this.databaseService.extension.findMany();
+      const totalExtensions = await this.databaseService.extension.count();
+
+      const extensions = await this.databaseService.extension.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      const totalPages = Math.ceil(totalExtensions / limit);
+
+      return {
+        page,
+        limit,
+        extensions,
+        totalExtensions,
+        totalPages,
+      };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new BadRequestException('Failed to retrieve extensions');
+      }
+      throw error;
+    }
+  }
+
+  async findAllByActive(active: boolean, paginationDto: PaginationDto) {
+    const { page, limit } = paginationDto ?? { page: 1, limit: 20 };
+
+    try {
+      const totalExtensions = await this.databaseService.extension.count({
+        where: { active },
+      });
+
+      const extensions = await this.databaseService.extension.findMany({
+        where: { active },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      const totalPages = Math.ceil(totalExtensions / limit);
+
+      return {
+        page,
+        limit,
+        extensions,
+        totalExtensions,
+        totalPages,
+      };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new BadRequestException('Failed to retrieve extensions');

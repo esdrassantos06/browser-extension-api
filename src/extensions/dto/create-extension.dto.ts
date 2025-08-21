@@ -3,7 +3,6 @@ import {
   IsString,
   IsOptional,
   IsBoolean,
-  IsDateString,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -29,14 +28,4 @@ export class CreateExtensionDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
-
-  @ApiPropertyOptional({ description: 'Creation date' })
-  @IsOptional()
-  @IsDateString()
-  createdAt?: Date | string;
-
-  @ApiPropertyOptional({ description: 'Update date' })
-  @IsOptional()
-  @IsDateString()
-  updatedAt?: Date | string;
 }

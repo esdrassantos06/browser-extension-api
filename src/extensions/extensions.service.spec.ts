@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExtensionsService } from './extensions.service';
-import { DatabaseService } from '../database/database.service';
+import { PrismaService } from 'nestjs-prisma';
 import { NotFoundException } from '@nestjs/common';
 
 describe('ExtensionsService', () => {
@@ -12,6 +12,7 @@ describe('ExtensionsService', () => {
       findUnique: jest.Mock;
       update: jest.Mock;
       delete: jest.Mock;
+      count: jest.Mock;
     };
   };
 
@@ -32,6 +33,7 @@ describe('ExtensionsService', () => {
         findUnique: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        count: jest.fn(),
       },
     };
 
@@ -39,7 +41,7 @@ describe('ExtensionsService', () => {
       providers: [
         ExtensionsService,
         {
-          provide: DatabaseService,
+          provide: PrismaService,
           useValue: mockDatabaseService,
         },
       ],
@@ -86,20 +88,35 @@ describe('ExtensionsService', () => {
   describe('findAll', () => {
     it('should return all extensions', async () => {
       const extensions = [mockExtension];
+      mockDatabaseService.extension.count.mockResolvedValue(1);
       mockDatabaseService.extension.findMany.mockResolvedValue(extensions);
 
       const result = await service.findAll({ page: 1, limit: 20 });
 
       expect(mockDatabaseService.extension.findMany).toHaveBeenCalled();
-      expect(result).toEqual(extensions);
+      expect(result).toEqual({
+        extensions,
+        page: 1,
+        limit: 20,
+        totalExtensions: 1,
+        totalPages: 1,
+      });
     });
 
     it('should return empty array when no extensions exist', async () => {
+      mockDatabaseService.extension.count.mockResolvedValue(0);
       mockDatabaseService.extension.findMany.mockResolvedValue([]);
 
       const result = await service.findAll({ page: 1, limit: 20 });
 
-      expect(result).toEqual([]);
+      expect(mockDatabaseService.extension.findMany).toHaveBeenCalled();
+      expect(result).toEqual({
+        extensions: [],
+        page: 1,
+        limit: 20,
+        totalExtensions: 0,
+        totalPages: 0,
+      });
     });
   });
 

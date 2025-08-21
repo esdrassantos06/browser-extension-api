@@ -28,7 +28,21 @@ async function bootstrap() {
 
   app.use(express.json({ limit: '10kb' }));
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'script-src': ["'self'", 'https://cdn.jsdelivr.net'],
+          'style-src': [
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            "'unsafe-inline'",
+          ],
+        },
+      },
+    }),
+  );
 
   app.use(
     '/reference',
