@@ -1,17 +1,17 @@
 # Browser Extension API
 
-A RESTful API built with NestJS for managing browser extensions. This API provides endpoints to create, read, update, delete, and manage the activation status of browser extensions.
+A NestJS REST API that stores browser extensions and tracks whether each one is active. CRUD plus two dedicated endpoints for flipping activation state.
 
-## 🚀 Features
+## Features
 
 - **CRUD Operations**: Full Create, Read, Update, Delete functionality for extensions
 - **Activation Management**: Activate/deactivate extensions with dedicated endpoints
 - **Database Integration**: PostgreSQL database with Prisma ORM
 - **Type Safety**: Built with TypeScript for better development experience
-- **Testing**: Comprehensive test suite with Jest
+- **Testing**: unit and e2e suites on Jest
 - **Docker Support**: Easy development and production setup with Docker Compose
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
 - **Database**: PostgreSQL with [Prisma](https://www.prisma.io/) ORM
@@ -19,14 +19,14 @@ A RESTful API built with NestJS for managing browser extensions. This API provid
 - **Testing**: Jest
 - **Containerization**: Docker & Docker Compose
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js (v18 or higher)
 - npm or yarn
 - PostgreSQL database
 - Docker & Docker Compose (for containerized setup)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Full Docker Setup (Recommended for Production)
 
@@ -169,7 +169,7 @@ This option runs only the database in Docker while running the API locally for b
    npm run start:dev
    ```
 
-## 🐳 Docker Commands
+## Docker Commands
 
 ### Development Commands
 
@@ -199,7 +199,7 @@ docker-compose up -d --build
 docker-compose exec nest-postgres psql -U postgres -d postgres
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 The API will be available at `http://localhost:3000`
 
@@ -258,7 +258,7 @@ Response:
 PATCH /extensions/:id/activate
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Unit tests
@@ -277,7 +277,7 @@ npm run test:watch
 docker-compose exec nest-api npm run test
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -307,7 +307,7 @@ docker/
 └── docker-compose.yml # Development environment
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 The application uses a simple `Extension` model:
 
@@ -322,7 +322,7 @@ model Extension {
 }
 ```
 
-## 📝 Available Scripts
+## Available Scripts
 
 ```bash
 # Development
@@ -353,7 +353,7 @@ docker-compose up -d  # Start development environment
 docker-compose down   # Stop development environment
 ```
 
-## 🔧 Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -374,7 +374,7 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -394,7 +394,7 @@ POSTGRES_DB=postgres
    - Reset database: `docker-compose down -v && docker-compose up -d`
    - Run migrations: `npx prisma migrate dev`
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -402,14 +402,14 @@ POSTGRES_DB=postgres
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## Author
 
 **Esdras Santos**
 
-## 🆘 Support
+## Support
 
 If you encounter any issues or have questions, please open an issue on GitHub.
